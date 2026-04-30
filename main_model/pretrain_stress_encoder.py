@@ -22,11 +22,11 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Pretrain a stress encoder on each craving fold and save encoder checkpoints."
     )
-    parser.add_argument("--parquet-path", type=str, default="../data/filtered_flat30/oud_left_flat30.parquet")
-    parser.add_argument("--control-parquet-path", type=str, default="../data/filtered_flat30/control_left_flat30.parquet")
-    parser.add_argument("--embedding-path", type=str, default="../data/user_embeddings_small.pickle")
-    parser.add_argument("--craving-splits-path", type=str, default="../data/loso_splits.json")
-    parser.add_argument("--output-dir", type=str, default="../checkpoints/stress_pretrain_left_oud_control")
+    parser.add_argument("--parquet-path", type=str, required=True)
+    parser.add_argument("--control-parquet-path", type=str, default=None)
+    parser.add_argument("--embedding-path", type=str, required=True)
+    parser.add_argument("--craving-splits-path", type=str, required=True)
+    parser.add_argument("--output-dir", type=str, required=True)
     parser.add_argument("--normalization", type=str, choices=["none", "subject_zscore", "subject_robust"], default="subject_zscore")
     parser.add_argument("--environment-key", type=str, default="participant_id")
     parser.add_argument("--epochs", type=int, default=20)

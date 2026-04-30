@@ -4,8 +4,8 @@ from typing import Optional
 
 @dataclass
 class DataConfig:
-    parquet_path: str = "./oudlab_windows_clean.parquet"
-    embedding_path: str = "./user_embeddings_small.pickle"
+    parquet_path: str = "./data/windows.parquet"
+    embedding_path: str = "./data/subject_embeddings.pickle"
     label_name: str = "craving"
     batch_size: int = 64
     num_workers: int = 0
@@ -50,8 +50,6 @@ class ModelConfig:
     use_stress_aux_head: bool = False
     stress_encoder_ckpt: Optional[str] = None
     freeze_stress_encoder: bool = True
-    legacy_baseline_ckpt: Optional[str] = None
-
 
 @dataclass
 class ObjectiveConfig:
@@ -83,7 +81,7 @@ class TrainConfig:
     scheduler_gamma: float = 0.5
     seed: int = 2026
     device: str = "auto"
-    output_dir: str = "./runs/oud_next"
+    output_dir: str = "./runs/experiment"
 
 
 @dataclass

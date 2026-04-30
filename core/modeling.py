@@ -1,18 +1,8 @@
 import math
-from pathlib import Path
-import sys
 
 import torch
 from torch import nn
 import torch.nn.functional as F
-
-
-ROOT = Path(__file__).resolve().parents[1]
-OUD_FINAL_DIR = ROOT / "OUD_final"
-if str(OUD_FINAL_DIR) not in sys.path:
-    sys.path.insert(0, str(OUD_FINAL_DIR))
-
-from models.factory import get_model as get_legacy_model  # noqa: E402
 
 
 def _load_stress_encoder_from_checkpoint(path):
@@ -806,23 +796,6 @@ class SemanticHierarchicalFeatureGateClassifier(nn.Module):
         }
 
 
-class LegacyModelAdapter(nn.Module):
-    def __init__(self, model_name, input_dim, num_classes, baseline_ckpt=None):
-        super().__init__()
-        self.model = get_legacy_model(
-            model_name=model_name,
-            input_dim=input_dim,
-            num_class=num_classes,
-            baseline_ckpt=baseline_ckpt,
-        )
-
-    def forward(self, features, good_embedding, bad_embedding):
-        output = self.model(features, good_embedding, bad_embedding)
-        if isinstance(output, dict):
-            return output
-        return {"logits": output}
-
-
 class StressEncoderClassifier(nn.Module):
     def __init__(
         self,
@@ -1536,9 +1509,4 @@ def build_model(cfg):
             use_stress_aux_head=cfg.use_stress_aux_head,
             freeze_stress_encoder=cfg.freeze_stress_encoder,
         )
-    return LegacyModelAdapter(
-        model_name=cfg.name,
-        input_dim=cfg.input_dim,
-        num_classes=cfg.num_classes,
-        baseline_ckpt=cfg.legacy_baseline_ckpt,
-    )
+    raise ValueError(f"Unsupported model name for public release: {cfg.name}")

@@ -14,6 +14,9 @@ This folder collects the core code needed to release the current modeling and st
 - `stat_analysis/`
   - `rq1.py`
   - `rq2.py`
+- `feature_extraction/`
+  - `extract_h5_window_features.py`
+  - `filter_feature_parquets.py`
 - `utils/`
   - `extract_hr_postgap_stat_embeddings.py`
 
@@ -27,6 +30,7 @@ This bundle covers:
 4. RQ1 statistical analysis
 5. RQ2 representational alignment analysis
 6. HR-AUC subject-embedding construction used by the current release bundle
+7. Generic physiological feature extraction and feature-quality filtering
 
 It does not include raw data due to IRB restrictions.
 
@@ -39,13 +43,35 @@ cd public_release_code
 PYTHONPATH=. python main_model/optuna_craving_frozen_stress.py --help
 ```
 
-and similarly for other scripts:
+The public release scripts do not assume the original local workspace layout. Paths, split files, checkpoint directories, and study names should be passed explicitly at runtime.
+
+Typical entry points:
 
 ```bash
 cd public_release_code
 PYTHONPATH=. python baselines/optuna_craving_baselines.py --help
-PYTHONPATH=. python stat_analysis/rq1.py
+PYTHONPATH=. python stat_analysis/rq1.py \
+  --oud-parquet data/oud_left.parquet \
+  --control-parquet data/control_left.parquet \
+  --checkpoint-dir checkpoints/stress_encoder \
+  --resilience-groups-json resilience_groups.json
 PYTHONPATH=. python stat_analysis/rq2.py --emb-npz emb_data.npz --labels-csv labels.csv
+PYTHONPATH=. python feature_extraction/extract_h5_window_features.py \
+  --input-dir converted_h5 \
+  --output-path runs/window_features.parquet
+PYTHONPATH=. python feature_extraction/filter_feature_parquets.py \
+  --input-dir runs \
+  --output-dir filtered \
+  --files window_features.parquet
+```
+
+For `stat_analysis/rq1.py`, the resilience grouping file should be a JSON object with the form:
+
+```json
+{
+  "high": ["subject_a", "subject_b"],
+  "low": ["subject_c", "subject_d"]
+}
 ```
 
 ## Notes
@@ -54,4 +80,5 @@ PYTHONPATH=. python stat_analysis/rq2.py --emb-npz emb_data.npz --labels-csv lab
 - The baseline entry point is `baselines/optuna_craving_baselines.py`.
 - The strict 303-feature RQ1 rerun is `stat_analysis/rq1.py`.
 - The RQ2 script is a compact standalone implementation of the PLS-based representational alignment analysis discussed in the paper.
+- The `feature_extraction/` scripts are dataset-agnostic public-release versions of the feature extraction and filtering pipeline. They intentionally avoid hardcoded local paths and dataset-specific naming conventions.
 - The shared modeling package released with this code bundle is named `core`.

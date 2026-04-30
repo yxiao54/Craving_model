@@ -17,7 +17,7 @@ from xgboost import XGBClassifier
 
 from core import ExperimentConfig, Trainer, build_model, build_objective
 from core.data import load_base_resources, make_dataset, make_loader, make_weighted_sampler
-from run_loso_oud_next import EXCLUDED_TASKS, filter_oudlab_subjects_for_label, summarize_subject_label_types
+from core.subject_policy import EXCLUDED_TASKS, filter_oudlab_subjects_for_label, summarize_subject_label_types
 
 
 def parse_args():
@@ -25,10 +25,10 @@ def parse_args():
     parser.add_argument("--baseline", type=str, required=True, choices=[
         "xgboost", "rbf_svm", "random_forest", "mlp", "concat", "cross_attention", "film_input", "moe", "irm", "vrex", "groupdro",
     ])
-    parser.add_argument("--parquet-path", type=str, default="../data/filtered_flat30/oud_left_flat30.parquet")
-    parser.add_argument("--embedding-path", type=str, default="../data/user_embeddings_small.pickle")
-    parser.add_argument("--splits-path", type=str, default="../data/loso_splits.json")
-    parser.add_argument("--test-subjects-json", type=str, default="../data/fixed10_shared_semantic_goodbad.json")
+    parser.add_argument("--parquet-path", type=str, required=True)
+    parser.add_argument("--embedding-path", type=str, required=True)
+    parser.add_argument("--splits-path", type=str, required=True)
+    parser.add_argument("--test-subjects-json", type=str, default=None)
     parser.add_argument("--study-name", type=str, required=True)
     parser.add_argument("--storage", type=str, required=True)
     parser.add_argument("--n-trials", type=int, default=500)

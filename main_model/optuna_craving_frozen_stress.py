@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score, r
 
 from core import ExperimentConfig, Trainer, build_model, build_objective
 from core.data import load_base_resources, make_dataset, make_loader, make_weighted_sampler
-from run_loso_oud_next import (
+from core.subject_policy import (
     EXCLUDED_TASKS,
     summarize_subject_label_types,
     filter_oudlab_subjects_for_label,
@@ -22,20 +22,20 @@ from run_loso_oud_next import (
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Optuna search for craving with a frozen stress encoder.")
-    parser.add_argument("--parquet-path", type=str, default="../data/filtered_flat30/oud_left_flat30.parquet")
-    parser.add_argument("--embedding-path", type=str, default="../data/user_embeddings_small.pickle")
-    parser.add_argument("--splits-path", type=str, default="../data/loso_splits.json")
-    parser.add_argument("--test-subjects-json", type=str, default="../data/fixed10_shared_semantic_goodbad.json")
-    parser.add_argument("--stress-encoder-dir", type=str, default="../checkpoints/stress_pretrain_left_oud_control")
+    parser.add_argument("--parquet-path", type=str, required=True)
+    parser.add_argument("--embedding-path", type=str, required=True)
+    parser.add_argument("--splits-path", type=str, required=True)
+    parser.add_argument("--test-subjects-json", type=str, default=None)
+    parser.add_argument("--stress-encoder-dir", type=str, required=True)
     parser.add_argument("--reference-parquet", type=str, default=None, help="Optional parquet used to restrict OUDLab features to a shared set, e.g. OUDWildNew flat-mean parquet.")
-    parser.add_argument("--study-name", type=str, default="craving_frozen_stress_optuna")
-    parser.add_argument("--storage", type=str, default="sqlite:///db/craving_frozen_stress.db")
+    parser.add_argument("--study-name", type=str, required=True)
+    parser.add_argument("--storage", type=str, required=True)
     parser.add_argument("--n-trials", type=int, default=50)
     parser.add_argument("--timeout", type=int, default=None)
     parser.add_argument("--max-folds", type=int, default=None)
     parser.add_argument("--epochs", type=int, default=24)
     parser.add_argument("--seed", type=int, default=2026)
-    parser.add_argument("--output-dir", type=str, default="./runs/optuna_craving_frozen_stress")
+    parser.add_argument("--output-dir", type=str, required=True)
     parser.add_argument("--objective-choices", type=str, nargs="*", default=["erm", "vrex"])
     parser.add_argument("--sampler", type=str, choices=["weighted", "none"], default="weighted")
     parser.add_argument("--fixed-fusion-mode", type=str, default=None)
