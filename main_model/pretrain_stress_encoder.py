@@ -14,9 +14,6 @@ from core import ExperimentConfig, Trainer, build_model, build_objective
 from core.data import load_base_resources, make_dataset, make_loader, make_weighted_sampler
 
 
-DEFAULT_DROP_TASKS = ["good", "bad", "stress"]
-DEFAULT_EXTRA_EVAL_SUBJECTS = ["8876", "8898", "9933", "9941", "9973"]
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
