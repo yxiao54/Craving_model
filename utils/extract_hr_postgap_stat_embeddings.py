@@ -12,9 +12,9 @@ import numpy as np
 
 
 VARIANTS = {
-    "all_gap10_mean": {"window_sec": 10.0},
-    "good_bad_gap10_mean": {"window_sec": 10.0},
-    "stress_gap10": {"window_sec": 10.0},
+    "all_gap_mean": {"window_sec": 15.0},
+    "good_bad_gap_mean": {"window_sec": 15.0},
+    "stress_gap": {"window_sec": 15.0},
     "postlast15": {"window_sec": 15.0},
 }
 
