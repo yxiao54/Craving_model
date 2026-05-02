@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument("--test-subjects-json", type=str, default=None)
     parser.add_argument("--study-name", type=str, required=True)
     parser.add_argument("--storage", type=str, required=True)
-    parser.add_argument("--n-trials", type=int, default=500)
+    parser.add_argument("--n-trials", type=int, default=50)
     parser.add_argument("--timeout", type=int, default=None)
     parser.add_argument("--max-folds", type=int, default=None)
     parser.add_argument("--epochs", type=int, default=24)
