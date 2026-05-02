@@ -14,7 +14,7 @@ from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score, r
 from core import ExperimentConfig, Trainer, build_model, build_objective
 from core.data import load_base_resources, make_dataset, make_loader, make_weighted_sampler
 from core.subject_policy import (
-    EXCLUDED_TASKS,
+
     summarize_subject_label_types,
     filter_oudlab_subjects_for_label,
 )
@@ -117,7 +117,7 @@ def prepare_base_dataframe(parquet_path, embedding_path):
     cfg.data.parquet_path = parquet_path
     cfg.data.embedding_path = embedding_path
     cfg.data.label_name = "craving"
-    base_df, feature_cols, embeddings = load_base_resources(cfg.data, drop_tasks=sorted(EXCLUDED_TASKS))
+    base_df, feature_cols, embeddings = load_base_resources(cfg.data)
     if "dataset_name" in base_df.columns:
         base_df = base_df[base_df["dataset_name"].astype(str) == "OUDLab"].copy()
     if "side" in base_df.columns:
