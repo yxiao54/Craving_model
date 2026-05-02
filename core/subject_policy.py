@@ -1,18 +1,3 @@
-OUD_SUBJECT_PREFIXES = ("88", "99")
-
-TRAIN_ONLY = {
-    "9915", "9915v2",
-    "9933", "9933v2",
-    "9945", "9945v2",
-    "9973", "9973v2",
-}
-
-EXCLUDED_TASKS = {
-    "good",
-    "bad",
-    "stress",
-}
-
 
 def summarize_subject_label_types(df, label_name):
     mixed_subjects = []
