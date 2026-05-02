@@ -29,7 +29,7 @@ This bundle covers:
 3. Baseline models
 4. RQ1 statistical analysis
 5. RQ2 representational alignment analysis
-6. HR-AUC subject-embedding construction used by the current release bundle
+6. HR dynamic embedding construction
 7. Generic physiological feature extraction and feature-quality filtering
 
 It does not include raw data due to IRB restrictions.
@@ -65,14 +65,7 @@ PYTHONPATH=. python feature_extraction/filter_feature_parquets.py \
   --files window_features.parquet
 ```
 
-For `stat_analysis/rq1.py`, the resilience grouping file should be a JSON object with the form:
 
-```json
-{
-  "high": ["subject_a", "subject_b"],
-  "low": ["subject_c", "subject_d"]
-}
-```
 
 ## Notes
 
