@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Train the fixed-configuration baselines used by the OUDLab evaluation.
+"""Train a baseline for OUDLab craving detection.
 
-This entry point intentionally has no hyperparameter-search dependency.  One
-invocation trains one baseline over the supplied LOSO folds and writes fold
-metrics, pooled predictions, and the resolved configuration.
+One invocation trains one baseline over the supplied LOSO folds and writes
+fold metrics, pooled predictions, and the resolved configuration.
 """
 
 from __future__ import annotations
@@ -35,7 +34,7 @@ BASELINES = ("mlp", "irm", "vrex", "groupdro", "concat", "cross_attention", "fil
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Train one fixed-config OUDLab baseline.")
+    p = argparse.ArgumentParser(description="Train one OUDLab craving baseline.")
     p.add_argument("--baseline", required=True, choices=BASELINES)
     p.add_argument("--parquet-path", required=True)
     p.add_argument("--embedding-path", required=True)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train RETRACE with the fixed paper configuration."""
+"""Train RETRACE for craving detection."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from core.subject_policy import EXCLUDED_TASKS, filter_oudlab_subjects_for_label
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Train RETRACE with fixed hyperparameters.")
+    p = argparse.ArgumentParser(description="Train RETRACE for OUDLab craving detection.")
     p.add_argument("--parquet-path", required=True)
     p.add_argument("--embedding-path", required=True)
     p.add_argument("--splits-path", required=True)
