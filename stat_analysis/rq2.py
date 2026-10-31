@@ -27,30 +27,45 @@ def parse_args():
     return parser.parse_args()
 
 
-def spearman_permutation(x, y, n_perm, seed):
-    r_obs, p_obs = spearmanr(x, y)
+def fit_one_component_pls(X_scaled, y):
+    """Fit one-component PLS and return the participant-level latent score."""
+    pls = PLSRegression(n_components=1)
+    return np.asarray(pls.fit_transform(X_scaled, y)[0][:, 0], dtype=float)
+
+
+def refit_permutation_test(X_scaled, y, observed_r, n_perm, seed):
+    """Permute the target and refit PLS for every permutation.
+
+    The embedding matrix is fixed and standardized once. Re-fitting the PLS
+    model after each target permutation incorporates the supervised
+    projection-learning step into the null distribution.
+    """
     rng = np.random.default_rng(seed)
-    perm_rs = np.zeros(n_perm, dtype=np.float64)
+    perm_rs = np.empty(n_perm, dtype=np.float64)
     for i in range(n_perm):
         y_perm = rng.permutation(y)
-        perm_rs[i], _ = spearmanr(x, y_perm)
-    p_perm = float(np.mean(np.abs(perm_rs) >= np.abs(r_obs)))
-    return float(r_obs), float(p_obs), p_perm
+        z_perm = fit_one_component_pls(X_scaled, y_perm)
+        perm_rs[i] = float(spearmanr(z_perm, y_perm).statistic)
+    p_perm = float(
+        (1.0 + np.sum(np.abs(perm_rs) >= abs(observed_r))) / (n_perm + 1.0)
+    )
+    return p_perm
 
 
 def run_pls(X, y, name, n_perm, seed):
     Xs = StandardScaler().fit_transform(X)
-    pls = PLSRegression(n_components=1)
-    z = pls.fit_transform(Xs, y)[0][:, 0]
-    r, p, p_perm = spearman_permutation(z, y, n_perm=n_perm, seed=seed)
+    z = fit_one_component_pls(Xs, y)
+    r, p = spearmanr(z, y)
+    p_perm = refit_permutation_test(Xs, y, r, n_perm=n_perm, seed=seed)
     return {
         "representation": name,
-        "method": "PLS",
-        "spearman_r": r,
-        "spearman_p": p,
-        "perm_p": p_perm,
+        "method": "one-component PLS with refit permutation test",
+        "spearman_r": float(r),
+        "spearman_p": float(p),
+        "perm_p": float(p_perm),
         "n_subjects": int(len(y)),
         "latent_dim": 1,
+        "n_permutations": int(n_perm),
     }
 
 

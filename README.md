@@ -8,12 +8,12 @@ This folder collects the core code needed to release the current modeling and st
   - Shared package used by the main model and baseline training code.
 - `main_model/`
   - `pretrain_stress_encoder.py`
-  - `optuna_craving_frozen_stress.py`
+  - `train_frozen_stress.py`
 - `baselines/`
-  - `optuna_craving_baselines.py`
+  - `train_fixed.py` -- fixed-configuration classical, domain-generalization, and multimodal baseline training
 - `stat_analysis/`
-  - `rq1.py`
-  - `rq2.py`
+  - `rq1.py` -- physiological modulation analysis used before the main evaluation
+  - `rq2.py` -- language--recovery alignment analysis used before the main evaluation
 - `feature_extraction/`
   - `extract_h5_window_features.py`
   - `filter_feature_parquets.py`
@@ -26,11 +26,12 @@ This bundle covers:
 
 1. Main model training
 2. Stress-encoder pretraining
-3. Baseline models
-4. RQ1 statistical analysis
-5. RQ2 representational alignment analysis
-6. HR dynamic embedding construction
-7. Generic physiological feature extraction and feature-quality filtering
+3. Fixed-configuration RETRACE training and inference
+4. Fixed-configuration baseline training and inference
+5. Pre-evaluation physiological modulation analysis
+6. Pre-evaluation language--recovery alignment analysis
+7. HR-AUC subject-embedding construction used by the current release bundle
+8. Generic physiological feature extraction and feature-quality filtering
 
 It does not include raw data due to IRB restrictions.
 
@@ -40,22 +41,28 @@ Run scripts from this folder root and set `PYTHONPATH` so the shared `core` pack
 
 ```bash
 cd public_release_code
-PYTHONPATH=. python main_model/optuna_craving_frozen_stress.py --help
+PYTHONPATH=. python main_model/train_frozen_stress.py --help
+PYTHONPATH=. python baselines/train_fixed.py --help
 ```
 
-The public release scripts do not assume the original local workspace layout. Paths, split files, checkpoint directories, and study names should be passed explicitly at runtime.
+The public release scripts do not assume the original local workspace layout. Paths, split files, checkpoint directories, and output directories should be passed explicitly at runtime.
 
 Typical entry points:
 
 ```bash
 cd public_release_code
-PYTHONPATH=. python baselines/optuna_craving_baselines.py --help
 PYTHONPATH=. python stat_analysis/rq1.py \
   --oud-parquet data/oud_left.parquet \
   --control-parquet data/control_left.parquet \
   --checkpoint-dir checkpoints/stress_encoder \
   --resilience-groups-json resilience_groups.json
 PYTHONPATH=. python stat_analysis/rq2.py --emb-npz emb_data.npz --labels-csv labels.csv
+PYTHONPATH=. python baselines/train_fixed.py \
+  --baseline cross_attention \
+  --parquet-path data/oudlab_windows.parquet \
+  --embedding-path data/subject_embeddings.pickle \
+  --splits-path data/loso_splits.json \
+  --output-dir runs/baselines/cross_attention
 PYTHONPATH=. python feature_extraction/extract_h5_window_features.py \
   --input-dir converted_h5 \
   --output-path runs/window_features.parquet
@@ -69,9 +76,11 @@ PYTHONPATH=. python feature_extraction/filter_feature_parquets.py \
 
 ## Notes
 
-- The current main model is the dual-path frozen-stress craving model in `main_model/optuna_craving_frozen_stress.py`.
-- The baseline entry point is `baselines/optuna_craving_baselines.py`.
-- The strict 303-feature RQ1 rerun is `stat_analysis/rq1.py`.
-- The RQ2 script is a compact standalone implementation of the PLS-based representational alignment analysis discussed in the paper.
+- The current main model is the dual-path frozen-stress craving model in `main_model/train_frozen_stress.py`.
+- RETRACE uses the fixed configuration reported in the paper; no hyperparameter search is required.
+- Baselines use fixed configurations in `baselines/train_fixed.py`; no hyperparameter search is required.
+- The baseline entry point supports `mlp`, `irm`, `vrex`, `groupdro`, `concat`, `cross_attention`, `film_input`, `moe`, `rbf_svm`, `xgboost`, and `random_forest`.
+- `stat_analysis/rq1.py` implements the physiological modulation analysis that motivates the subsequent craving-detection evaluation.
+- `stat_analysis/rq2.py` implements the language--recovery alignment analysis that motivates semantic subject-level guidance. The embedding matrix is standardized once, and the one-component PLS model is refitted for each participant-level HR-AUC permutation.
 - The `feature_extraction/` scripts are dataset-agnostic public-release versions of the feature extraction and filtering pipeline. They intentionally avoid hardcoded local paths and dataset-specific naming conventions.
 - The shared modeling package released with this code bundle is named `core`.
