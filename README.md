@@ -1,6 +1,6 @@
 # Public Release Code Bundle
 
-This folder collects the core code needed to release the current modeling and statistical analysis pipeline in a cleaner structure.
+This repository contains the code for the RETRACE paper, including model training, baseline comparisons, statistical analyses, and feature extraction.
 
 ## Layout
 
