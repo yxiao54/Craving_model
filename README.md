@@ -56,3 +56,10 @@ PYTHONPATH=. python feature_extraction/filter_feature_parquets.py \
   --output-dir filtered \
   --files window_features.parquet
 ```
+
+## Notes
+
+- Run commands from this folder with `PYTHONPATH=.`.
+- `pretrain_stress_encoder.py` prepares the stress encoder; `train_craving.py` trains RETRACE for craving detection; `baselines/train.py` trains comparison models.
+- `stat_analysis/rq1.py` runs the physiological modulation analysis, and `stat_analysis/rq2.py` runs the language--recovery alignment analysis.
+- Raw data are not included because of IRB restrictions.
