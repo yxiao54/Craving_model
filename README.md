@@ -17,8 +17,6 @@ This repository contains the code for the RETRACE paper, including model trainin
 - `feature_extraction/`
   - `extract_h5_window_features.py`
   - `filter_feature_parquets.py`
-- `utils/`
-  - `extract_hr_postgap_stat_embeddings.py`
 
 ## Running the code
 
